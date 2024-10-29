@@ -17,9 +17,9 @@ def load_model(path):
 
 @tf.function
 def accuracy_multilabel(y, y_hat):
-  correct_prediction = tf.equal(tf.round(y_hat), y)
-  correct_prediction = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-  return correct_prediction
+    correct_prediction = tf.equal(tf.round(y_hat), y)
+    correct_prediction = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+    return correct_prediction
 
 class MetricsAtTopK:
     def __init__(self, k):
@@ -108,7 +108,7 @@ model_hypertension = load_model('models/final_model_20240122-074201_hypertension
 model_other = load_model('models/final_model_20240122-122757_others_effnet.h5')
 MODELS = [model_cataract,model_diabetes,model_glaucoma,model_hypertension,model_other]
 DISEASE = ['cataract','diabetes','glaucoma','hypertension','other']
-st.title('Occular Disease Classifier')
+st.title('Ocular Disease Classifier')
 
 MULTILABEL_CLASS = ['A','C','D','G','H','M','N','O']
 
