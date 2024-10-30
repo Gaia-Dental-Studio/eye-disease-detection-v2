@@ -42,7 +42,7 @@ This repository contains code for an Ocular Disease Classification App built usi
 4. Install the required dependencies:
 
    ```
-   pip install tensorflow streamlit
+   pip install -r ./requirements.txt
    ```
 
 5. Create a folder named models inside the repo, Copy all the models file into ./models the [GoogleDrive](https://drive.google.com/drive/folders/1Qp8I4YN3N47IjmwXA18RxwB1z-T4feXS) Exclude the model.h5 file
@@ -68,19 +68,7 @@ This repository contains code for an Ocular Disease Classification App built usi
 
 4. Installing Dependencies
    ```
-   conda install -c conda-forge streamlit==1.21
-   ```
-
-   ```
-   conda install -c apple tensorflow-deps==2.10.0
-   ```
-
-   ```
-   python -m pip install tensorflow-macos==2.10.0
-   ```
-
-   ```
-   python -m pip install tensorflow-metal==0.6.0
+   pip install -r ./requirements.txt
    ```
 
 ## Usage
