@@ -57,6 +57,7 @@ def predict():
         return jsonify({"predictions": predictions})
     else:
         results = predict_partial(image)
+        results = {key: float(value) if isinstance(value, np.float32) else value for key, value in results.items()}
         return jsonify(results)
 
 if __name__ == '__main__':
