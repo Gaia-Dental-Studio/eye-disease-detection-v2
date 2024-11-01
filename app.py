@@ -36,7 +36,7 @@ if file:
 
                 if classification_selection == "Full Model":
                     predictions = response_data.get("predictions", [])
-                    MULTILABEL_CLASS = ['A', 'C', 'D', 'G', 'H', 'M', 'N', 'O']
+                    MULTILABEL_CLASS = ['Age related Macular Degeneration', 'Cataract', 'Diabetes', 'Glaucoma', 'Hypertension', 'Pathological Myopia', 'Normal', 'Other diseases/abnormalities']
                     
                     # Display predictions
                     for idx, confidence in enumerate(predictions[0]):

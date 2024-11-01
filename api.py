@@ -8,16 +8,16 @@ import joblib
 app = Flask(__name__)
 
 # Load models
-model_multiclass = tf.keras.models.load_model('models/final_model_20240122-033648_multiclass.h5', compile=False)
+model_multiclass = tf.keras.models.load_model('models/final_model_20241101-101344_multiclass_resnet50.h5', compile=False)
 model_multiclass.compile(optimizer="adam", loss="categorical_crossentropy", metrics=["accuracy"])
 
 # Individual disease models (modify paths to each model as required)
 MODELS = {
     'cataract': tf.keras.models.load_model('models/final_model_20240119-154434_cataract_effnet.h5', compile=False),
-    'diabetes': tf.keras.models.load_model('models/final_model_20240119-172037_diabetes_effnet.h5', compile=False),
-    'glaucoma': tf.keras.models.load_model('models/final_model_20240119-174234_glaucoma_effnet.h5', compile=False),
-    'hypertension': tf.keras.models.load_model('models/final_model_20240122-074201_hypertension_effnet.h5', compile=False),
-    'other': tf.keras.models.load_model('models/final_model_20240122-122757_others_effnet.h5', compile=False)
+    'diabetes': tf.keras.models.load_model('models/final_model_20241029-154908_diabetes_effnet.h5', compile=False),
+    'glaucoma': tf.keras.models.load_model('models/final_model_20241031-085230_glaucoma_effnet.h5', compile=False),
+    'hypertension': tf.keras.models.load_model('models/final_model_20241031-080449_hypertension_effnet.h5', compile=False),
+    'other': tf.keras.models.load_model('models/final_model_20241031-093243_others_effnet.h5', compile=False)
 }
 for model in MODELS.values():
     model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
