@@ -35,20 +35,34 @@ if file:
                 response_data = response.json()
 
                 if classification_selection == "Full Model":
-                    predictions = response_data.get("predictions", [])
-                    MULTILABEL_CLASS = ['Age related Macular Degeneration', 'Cataract', 'Diabetes', 'Glaucoma', 'Hypertension', 'Pathological Myopia', 'Normal', 'Other diseases/abnormalities']
-                    
-                    # Display predictions
-                    for idx, confidence in enumerate(predictions[0]):
-                        st.write(f"Confidence of {MULTILABEL_CLASS[idx]}: {confidence:.4f}")
-                    best_index = np.argmax(predictions[0])
-                    st.write(f"Best Result: {MULTILABEL_CLASS[best_index]}")
-                    st.write(f"Confidence: {predictions[0][best_index]:.4f}")
-                
-                else:  # Partial Model predictions
-                    for disease, confidence in response_data.items():
-                        st.write(f"Model {disease.capitalize()}: {confidence:.4f}")
-                    best_disease = max(response_data, key=response_data.get)
-                    st.write(f"Best Result: {best_disease.capitalize()}")
+                    best_prediction = response_data["best_prediction"]
+                    best_confidence = response_data["best_confidence"]
+                    top_3_confidences = response_data["top_3_confidences"]
+                    all_confidences = response_data.get("all_confidences", {}) # Retrieve all confidences for detailed view
+
+                    st.success(f"Predicted class: {best_prediction}")
+                    st.info(f"Confidence score: {best_confidence}%")
+
+                    st.write("Top 3 Confidences:")
+                    for class_name, confidence in top_3_confidences.items():
+                        st.write(f"{class_name}: {confidence}%")
+
+                    # Optional: Display all confidences for detailed view
+                    # if st.checkbox("Show all class confidences"):
+                    #     st.write("All Class Confidences:")
+                    #     for class_name, confidence in all_confidences.items():
+                    #         st.write(f"{class_name}: {confidence}%")
+
+                else:  # Partial Model
+                    top_3_results = response_data["top_3_results"]
+                    best_disease = response_data["best_disease"]
+                    all_results = response_data.get("all_results", {}) # Retrieve all results
+
+                    st.success(f"Best Result: {best_disease.capitalize()}")
+                    st.write("Top 3 Results:")
+                    for disease, confidence in top_3_results.items():
+                        st.write(f"Model {disease.capitalize()}: {confidence}%")
+
+
             except requests.exceptions.RequestException as e:
                 st.error("Error in server request. Please try again.")
