@@ -3,7 +3,12 @@ from flask import Flask, request, jsonify
 import tensorflow as tf
 import numpy as np
 from PIL import Image
-import joblib
+from tensorflow.keras.models import load_model
+from tensorflow.keras.applications.resnet50 import preprocess_input
+from tensorflow.keras.applications.efficientnet import preprocess_input as effnet_preprocess
+from tensorflow.image import resize
+from io import BytesIO
+from PIL import Image
 
 app = Flask(__name__)
 
@@ -25,15 +30,30 @@ for model in MODELS.values():
 
 # Define prediction functions
 def preprocess_image(image):
-    image = image.resize((224, 224))
-    image = np.array(image) / 255.0
-    image = np.expand_dims(image, axis=0)
+    """Preprocess input image to match model training pipeline."""
+    image = image.resize((224, 224))  # Ensure correct input size
+    image = np.array(image)
+    image = effnet_preprocess(image)  # Use EfficientNet's preprocessing
+    image = np.expand_dims(image, axis=0)  # Add batch dimension
     return image
 
-def predict_multiclass(image):
-    processed_image = preprocess_image(image)
-    predictions = model_multiclass.predict(processed_image)
-    return predictions.tolist()  # Convert to list for JSON serialization
+def load_and_preprocess_image(image_bytes):
+    image = Image.open(BytesIO(image_bytes)).convert("RGB") # Handle various image formats and ensure RGB
+    image = np.array(image)
+    image = tf.convert_to_tensor(image) # Convert PIL Image to Tensorflow tensor
+    image = resize(image, [224, 224])
+    image = tf.cast(image, tf.float32)
+    image = preprocess_input(image)
+    return image
+
+def predict_multiclass(model, image):
+    image = load_and_preprocess_image(image)
+    image = tf.expand_dims(image, axis=0)  # Add batch dimension
+    predictions = model.predict(image)
+    predicted_class = np.argmax(predictions, axis=-1)
+    confidence_scores = predictions[0] * 100  # Convert to percentage
+    return predicted_class, confidence_scores
+
 
 def predict_partial(image):
     processed_image = preprocess_image(image)
@@ -52,27 +72,24 @@ def predict():
     if not file or model_type not in ["Full Model", "Partial Model"]:
         return jsonify({"error": "Invalid input"}), 400
 
-    image = Image.open(file)
+    # image = Image.open(file)
     if model_type == "Full Model":
-        predictions = predict_multiclass(image)
+        image_bytes = file.read()
+        # predictions = predict_multiclass(image)
         MULTILABEL_CLASS = ['Normal', 'Diabetes', 'Glaucoma', 'Cataract', 'AMD', 'Hypertension', 'Myopia', 'Other']
 
-        # Calculate confidences and sort (highest to lowest)
-        class_confidences = {MULTILABEL_CLASS[i]: round(predictions[0][i] * 100, 2) for i in range(len(MULTILABEL_CLASS))}
-        sorted_confidences = sorted(class_confidences.items(), key=lambda item: item[1], reverse=True)
+        predicted_class, confidence_scores = predict_multiclass(model_multiclass, image_bytes)
 
-        top_3_confidences = dict(sorted_confidences[:3])  # Get top 3
-
-        best_prediction = sorted_confidences[0][0]  # Highest confidence class
-        best_confidence = sorted_confidences[0][1]
-
+        # Sort confidence scores and get top 3 in backend
+        sorted_scores = sorted(zip(MULTILABEL_CLASS, confidence_scores), key=lambda item: item[1], reverse=True) #Zip for sorting
+        top_3_scores = sorted_scores[:3]
         return jsonify({
-            "best_prediction": best_prediction,
-            "best_confidence": best_confidence,
-            "top_3_confidences": top_3_confidences,  # Top 3 confidences
-            "all_confidences": class_confidences, # All confidences for detailed view if needed
+            'best_prediction': MULTILABEL_CLASS[predicted_class[0]],
+            'top_3_scores': [{'label': label, 'score': float(score)} for label, score in top_3_scores] #Format for JSON
         })
+
     else:
+        image = Image.open(file)
         results = predict_partial(image)
         results = {key: float(value) if isinstance(value, np.float32) else value for key, value in results.items()}
 

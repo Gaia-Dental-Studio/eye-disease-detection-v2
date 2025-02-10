@@ -36,22 +36,18 @@ if file:
 
                 if classification_selection == "Full Model":
                     best_prediction = response_data["best_prediction"]
-                    best_confidence = response_data["best_confidence"]
-                    top_3_confidences = response_data["top_3_confidences"]
-                    all_confidences = response_data.get("all_confidences", {}) # Retrieve all confidences for detailed view
+                    # best_confidence = response_data["best_confidence"]
+                    # top_3_confidences = response_data["top_3_confidences"]
+                    # all_confidences = response_data.get("all_confidences", {}) # Retrieve all confidences for detailed view
 
                     st.success(f"Predicted class: {best_prediction}")
-                    st.info(f"Confidence score: {best_confidence}%")
+                    # st.info(f"Confidence score: {best_confidence}%")
 
                     st.write("Top 3 Confidences:")
-                    for class_name, confidence in top_3_confidences.items():
-                        st.write(f"{class_name}: {confidence}%")
-
-                    # Optional: Display all confidences for detailed view
-                    # if st.checkbox("Show all class confidences"):
-                    #     st.write("All Class Confidences:")
-                    #     for class_name, confidence in all_confidences.items():
-                    #         st.write(f"{class_name}: {confidence}%")
+                    for item in response_data['top_3_scores']:  # Access items from the list
+                        st.write(f"{item['label']}: {item['score']:.2f}%")
+                    # for class_name, confidence in top_3_confidences.items():
+                    #     st.write(f"{class_name}: {confidence}%")
 
                 else:  # Partial Model
                     top_3_results = response_data["top_3_results"]
@@ -59,9 +55,11 @@ if file:
                     all_results = response_data.get("all_results", {}) # Retrieve all results
 
                     st.success(f"Best Result: {best_disease.capitalize()}")
+
                     st.write("Top 3 Results:")
                     for disease, confidence in top_3_results.items():
                         st.write(f"Model {disease.capitalize()}: {confidence}%")
+
 
 
             except requests.exceptions.RequestException as e:
