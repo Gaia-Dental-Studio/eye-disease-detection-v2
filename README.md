@@ -93,12 +93,12 @@ Documentation Version: 10.02.2025
 - The newest trained model was stored in gdrive for [Partial Model](https://drive.google.com/drive/folders/1Ny-qD4Uj94Y1UWV6DQnWAQnHHHWfpROw?usp=drive_link) and [Full model](https://drive.google.com/file/d/1haaczI0ExuMDDrqeXi69rkZABhrM31cz/view?usp=drive_link).
 - The training code to produce those model was stored at this [Link](https://drive.google.com/drive/folders/18tQsgdb3OBW6Q8fnYeisnbFD4T1siXq0?usp=drive_link).
 - The training was still done using the same datasets which is [ODIR5K](https://www.kaggle.com/datasets/andrewmvd/ocular-disease-recognition-odir5k) from kaggle.
-- The partial model is a binary classification case where the dataset of one disease is compared to others. Considering the datasets (images) available for each class, the classification was only done on five classes. The partial model was trained using EfficientNetB0 architecture. The following are the classification class and its accuracy obtained during the training:
-   [-]Cataract: 98%
-   [-]Glaucoma: 88%
-   [-]Hypertansive-retinopathy: 88%
-   [-]Diabetic-retinopathy: 89%
-   [-]Other:87%
+- The partial model is a binary classification case where the dataset of one disease is compared to others. Considering the datasets (images) available for each class, the classification was only done on five classes. The partial model was trained using EfficientNetB0 architecture. The following are the classification class and its accuracy obtained during the training: 
+   - Cataract: 98%
+   - Glaucoma: 88%
+   - Hypertansive-retinopathy: 88%
+   - Diabetic-retinopathy: 89%
+   - Other:87%
 - The full model is a multiclass classification case where all class datasets are used at once in the training process, resulting in one h5 model. This model is trained by fine-tuning the ResNet50 architecture. The accuracy during the training process only reach 62% where the f1-score of class variation in range 30%-70%.
 - The API endpoint code for this model version are api.py (Flask-based backend) and app.py (Streamlit frontend). To run the demo app, run ```python api.py``` and ```streamlit run app.py``` simultaneously in terminal or cmd.
 
